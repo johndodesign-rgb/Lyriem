@@ -1,0 +1,1775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lyriem — The No Platform Fee Freelance Marketplace</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;0,9..40,900;1,9..40,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy:        #353c50;
+    --navy-dark:   #272d3e;
+    --navy-light:  #404859;
+    --orange:      #f6946b;
+    --orange-light:#f9ab88;
+    --yellow:      #d4e022;
+    --white:       #ffffff;
+    --text-muted:  rgba(255,255,255,0.55);
+    --card-bg:     rgba(255,255,255,0.05);
+    --card-border: rgba(255,255,255,0.09);
+  }
+
+  html, body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--navy-dark);
+    color: var(--white);
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+  }
+
+  /* ══════════════════════════════════════════════════
+     HERO
+  ══════════════════════════════════════════════════ */
+  .hero {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background:
+      linear-gradient(
+        to top right,
+        #353c50 0%,
+        #2a3044 28%,
+        #161b28 100%
+      );
+  }
+
+  .portrait-zone {
+    position: absolute;
+    top: 0; right: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    overflow: hidden;
+  }
+
+  .portrait-slide {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 1.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .portrait-slide.active { opacity: 1; }
+
+  .portrait-slide img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    object-position: 70% 20%;
+    filter: grayscale(1) brightness(0.55) contrast(1.1);
+    display: block;
+  }
+
+  /* full-width vignette — gradient matches hero bg exactly on left,
+     fades to transparent on right. No seam possible. */
+  .portrait-vignette {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    background:
+      linear-gradient(to right,
+        #353c50 0%,
+        #2d3347 25%,
+        rgba(30,37,55,0.85) 42%,
+        rgba(20,25,40,0.4) 60%,
+        transparent 80%
+      ),
+      radial-gradient(ellipse 50% 60% at 72% 36%, transparent 20%, rgba(8,10,20,0.4) 60%, rgba(8,10,20,0.88) 100%);
+  }
+
+  .portrait-glow {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 65%;
+    z-index: 3;
+    pointer-events: none;
+    background: radial-gradient(
+      ellipse 70% 70% at 50% 100%,
+      var(--orange) 0%,
+      rgba(246,148,107,0.55) 22%,
+      rgba(246,148,107,0.2) 45%,
+      transparent 70%
+    );
+    opacity: 0.45;
+  }
+
+  .texture-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    pointer-events: none;
+    background-image: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 9px,
+      rgba(255,255,255,0.055) 9px,
+      rgba(255,255,255,0.055) 11px
+    );
+  }
+
+  /* portrait-row is layout-transparent on desktop */
+  .portrait-row {
+    position: contents;
+  }
+
+  /* the texture inside portrait-row is redundant on desktop
+     since the hero-level texture already covers everything —
+     hide it on desktop, show only on mobile */
+  .texture-portrait { display: none; }
+
+  /* ── NAV ─────────────────────────────────────────── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    background: #272d3e;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 36px;
+    padding: 0 48px;
+    height: 56px;
+    flex-shrink: 0;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  nav a { color: var(--white); text-decoration: none; opacity: 0.82; transition: opacity 0.2s; }
+  nav a:hover { opacity: 1; }
+  .nav-already { opacity: 0.5; font-weight: 400; text-transform: none; letter-spacing: 0; font-size: 13px; }
+  .nav-signin  { color: var(--yellow) !important; opacity: 1 !important; font-weight: 700; }
+
+  /* ── HERO CONTENT ────────────────────────────────── */
+  .hero-content {
+    position: relative;
+    z-index: 8;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 48px 64px 140px;
+    max-width: 780px;
+    margin-top: 56px; /* nav height */
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    margin-bottom: 36px;
+    margin-left: -40px;
+    animation: fadeUp 0.6s ease both;
+  }
+  .logo svg { width: 340px !important; height: auto !important; display: block; }
+
+  .headline {
+    font-weight: 900;
+    font-size: clamp(46px, 5.6vw, 74px);
+    line-height: 0.96;
+    text-transform: uppercase;
+    color: var(--yellow);
+    margin-bottom: 22px;
+    letter-spacing: -0.02em;
+    animation: fadeUp 0.6s 0.08s ease both;
+  }
+
+  .subhead {
+    font-weight: 700;
+    font-size: clamp(12px, 1.3vw, 15px);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--orange);
+    line-height: 1.6;
+    animation: fadeUp 0.6s 0.16s ease both;
+  }
+
+  .cta-zone {
+    position: absolute;
+    bottom: 52px;
+    left: 0; right: 0;
+    z-index: 8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeUp 0.6s 0.28s ease both;
+  }
+
+  .cta-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--orange);
+    color: #1a1a1a;
+    font-weight: 800;
+    font-size: 15px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 20px 72px;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    transition: background 0.2s, transform 0.15s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .cta-btn:hover { background: var(--orange-light); transform: translateY(-2px); }
+  /* glow lives on the .cta-zone wrapper so it never clips against the button */
+
+  /* ── FEATURED MAKER ──────────────────────────────── */
+  .featured-maker {
+    position: absolute;
+    right: 52px; bottom: 130px;
+    z-index: 8;
+    width: 260px;
+    animation: fadeUp 0.6s 0.36s ease both;
+  }
+  .featured-bar { width: 44px; height: 4px; background: var(--yellow); margin-bottom: 10px; }
+  .featured-label {
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--orange); margin-bottom: 5px;
+    transition: opacity 0.45s ease;
+  }
+  .featured-label span { color: var(--yellow); }
+  .featured-desc {
+    font-size: 13px; line-height: 1.6;
+    color: var(--white); opacity: 0.85;
+    transition: opacity 0.45s ease;
+  }
+  .featured-maker.fading .featured-label,
+  .featured-maker.fading .featured-desc,
+  .featured-maker.fading .hire-link { opacity: 0 !important; }
+
+  .hire-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 12px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--yellow);
+    text-decoration: none;
+    opacity: 0.9;
+    transition: opacity 0.2s, gap 0.2s;
+  }
+  .hire-link:hover { opacity: 1; gap: 9px; }
+  .hire-link svg { flex-shrink: 0; }
+
+  /* ── CAROUSEL CONTROLS (desktop base) ───────────── */
+  .carousel-controls {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    margin-top: 14px;
+  }
+
+  .ctrl-btn, .ctrl-pause {
+    display: flex; align-items: center; justify-content: center;
+    width: 26px; height: 26px;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.16);
+    color: var(--white); cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+    flex-shrink: 0; padding: 0;
+  }
+  .ctrl-btn:hover, .ctrl-pause:hover { background: rgba(255,255,255,0.14); border-color: rgba(255,255,255,0.32); }
+  .ctrl-pause.paused { border-color: var(--yellow); color: var(--yellow); }
+  .carousel-dots { display: flex; align-items: center; gap: 6px; flex: 1; }
+  .dot {
+    height: 3px; width: 18px;
+    background: rgba(255,255,255,0.22);
+    cursor: pointer; border: none; padding: 0;
+    transition: background 0.3s, width 0.3s;
+    position: relative; overflow: hidden;
+  }
+  .dot.active { background: var(--yellow); width: 28px; }
+  .dot-progress::after {
+    content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+    width: 0%; background: rgba(255,255,255,0.45);
+    transition: width 0s linear;
+  }
+  .dot-progress.running::after { width: 100%; transition: width 5s linear; }
+
+  /* ══════════════════════════════════════════════════
+     SHARED SECTION STYLES
+  ══════════════════════════════════════════════════ */
+  .section {
+    padding: 100px 64px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .section-eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 16px;
+  }
+
+  .section-title {
+    font-weight: 900;
+    font-size: clamp(32px, 4vw, 52px);
+    line-height: 1.0;
+    letter-spacing: -0.02em;
+    margin-bottom: 16px;
+  }
+
+  .section-title em {
+    font-style: italic;
+    color: var(--orange);
+  }
+
+  .section-subtitle {
+    font-size: 16px;
+    color: var(--text-muted);
+    line-height: 1.65;
+    max-width: 520px;
+  }
+
+  /* ══════════════════════════════════════════════════
+     SECTION 1 — THE MARKETPLACE IS BROKEN
+  ══════════════════════════════════════════════════ */
+  .broken-section {
+    background: var(--navy-dark);
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .broken-inner {
+    padding: 100px 64px;
+    max-width: 1100px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .broken-inner .section-title { margin-bottom: 12px; }
+  .broken-inner .section-subtitle {
+    margin: 0 auto 64px;
+    text-align: center;
+    max-width: 480px;
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    text-align: left;
+  }
+
+  .feature-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    padding: 36px 32px;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .feature-card:hover {
+    border-color: rgba(246,148,107,0.3);
+    background: rgba(246,148,107,0.04);
+  }
+
+  .feature-icon {
+    width: 40px; height: 40px;
+    margin-bottom: 24px;
+    color: var(--orange);
+  }
+
+  .feature-card h3 {
+    font-weight: 700;
+    font-size: 18px;
+    margin-bottom: 12px;
+    letter-spacing: -0.01em;
+  }
+
+  .feature-card p {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.7;
+  }
+
+  /* ══════════════════════════════════════════════════
+     SECTION 2 — HOW IT WORKS (white bg)
+  ══════════════════════════════════════════════════ */
+  .how-section {
+    background: #ffffff;
+    color: var(--navy-dark);
+  }
+
+  /* override global text-muted for light bg */
+  .how-section .section-eyebrow { color: var(--orange); }
+  .how-section .section-title   { color: var(--navy-dark); }
+
+  .how-inner {
+    padding: 100px 64px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .steps-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 56px;
+  }
+
+  .step-card {
+    background: #f5f5f7;
+    border: 1px solid rgba(53,60,80,0.1);
+    padding: 36px 32px;
+    position: relative;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .step-card:hover {
+    border-color: rgba(246,148,107,0.4);
+    box-shadow: 0 4px 24px rgba(246,148,107,0.1);
+  }
+
+  .step-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px; height: 36px;
+    background: var(--orange);
+    color: #1a1a1a;
+    font-weight: 900;
+    font-size: 16px;
+    margin-bottom: 24px;
+    border-radius: 50%;
+  }
+
+  .step-card h3 {
+    font-weight: 700;
+    font-size: 18px;
+    margin-bottom: 12px;
+    letter-spacing: -0.01em;
+    color: var(--navy-dark);
+  }
+
+  .step-card p {
+    font-size: 14px;
+    color: rgba(39,45,62,0.65);
+    line-height: 1.7;
+  }
+
+  /* connector line between steps */
+  .steps-grid .step-card:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 54px;
+    right: -13px;
+    width: 24px; height: 1px;
+    background: rgba(53,60,80,0.15);
+  }
+
+  /* ══════════════════════════════════════════════════
+     SECTION 3 — EARNINGS CALCULATOR (white bg)
+  ══════════════════════════════════════════════════ */
+  .calc-section {
+    background: #f5f5f7;
+    border-top: 1px solid rgba(53,60,80,0.08);
+  }
+
+  .calc-section .section-eyebrow { color: var(--orange); }
+  .calc-section .section-title   { color: var(--navy-dark); }
+  .calc-section .section-subtitle { color: rgba(39,45,62,0.65); }
+  .calc-left .bullet-item        { color: rgba(39,45,62,0.65); }
+  .calc-left .bullet-item span   { color: rgba(39,45,62,0.65); }
+  .calc-left .bullet-item strong { color: var(--navy-dark); }
+
+  .calc-inner {
+    padding: 100px 64px;
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: start;
+  }
+
+  .calc-left .bullet-list {
+    margin-top: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .calc-left .bullet-item {
+    display: flex;
+    gap: 12px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: rgba(39,45,62,0.65); /* dark text — calc section is light bg */
+  }
+
+  .bullet-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    margin-top: 7px;
+    flex-shrink: 0;
+  }
+  .bullet-dot.fiverr     { background: #e74c3c; }
+  .bullet-dot.upwork     { background: #27ae60; }
+  .bullet-dot.freelancer { background: #3498db; }
+  .bullet-dot.lyriem     { background: var(--yellow); }
+
+  .bullet-item strong { color: var(--navy-dark); }
+
+  /* ── CALCULATOR WIDGET ───────────────────────────── */
+  .calc-widget {
+    background: #ffffff;
+    border: 1px solid rgba(53,60,80,0.12);
+    padding: 36px;
+    box-shadow: 0 4px 32px rgba(53,60,80,0.08);
+  }
+
+  .calc-widget-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(39,45,62,0.45);
+    margin-bottom: 20px;
+  }
+
+  .calc-tabs {
+    display: flex;
+    border: 1px solid rgba(53,60,80,0.15);
+    margin-bottom: 24px;
+  }
+
+  .calc-tab {
+    flex: 1;
+    padding: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: center;
+    cursor: pointer;
+    color: rgba(39,45,62,0.45);
+    background: transparent;
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    transition: background 0.2s, color 0.2s;
+  }
+  .calc-tab.active {
+    background: var(--navy-dark);
+    color: var(--white);
+  }
+
+  .calc-input-wrap {
+    display: flex;
+    align-items: center;
+    border: 1px solid rgba(53,60,80,0.15);
+    background: #f5f5f7;
+    padding: 0 20px;
+    margin-bottom: 28px;
+    height: 60px;
+  }
+
+  .calc-dollar {
+    font-size: 22px;
+    font-weight: 300;
+    color: rgba(39,45,62,0.4);
+    margin-right: 8px;
+  }
+
+  .calc-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--navy-dark);
+    width: 100%;
+  }
+
+  .calc-platform-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(39,45,62,0.45);
+    margin-bottom: 14px;
+  }
+
+  .platform-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 28px;
+  }
+
+  .platform-chip {
+    padding: 6px 14px;
+    border: 1px solid rgba(53,60,80,0.18);
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(39,45,62,0.55);
+    cursor: pointer;
+    background: transparent;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .platform-chip.active {
+    border-color: var(--orange);
+    color: var(--orange);
+    background: rgba(246,148,107,0.08);
+  }
+
+  /* results bars */
+  .calc-results { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
+
+  .result-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .result-label {
+    font-size: 13px;
+    font-weight: 600;
+    width: 90px;
+    flex-shrink: 0;
+    color: rgba(39,45,62,0.55);
+  }
+
+  .result-bar-wrap { flex: 1; height: 4px; background: rgba(53,60,80,0.1); position: relative; overflow: hidden; }
+  .result-bar { height: 100%; transition: width 0.6s cubic-bezier(0.4,0,0.2,1); }
+  .result-bar.platform-bar { background: #e74c3c; }
+  .result-bar.lyriem-bar   { background: var(--yellow); }
+
+  .result-value {
+    font-size: 13px;
+    font-weight: 700;
+    width: 100px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .result-value.negative { color: #e74c3c; }
+  .result-value.positive { color: #6a7a00; } /* darker yellow for legibility on white */
+
+  .calc-summary {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .summary-card {
+    background: #f5f5f7;
+    border: 1px solid rgba(53,60,80,0.1);
+    padding: 20px;
+  }
+
+  .summary-card .summary-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(39,45,62,0.45);
+    margin-bottom: 8px;
+  }
+
+  .summary-card .summary-value {
+    font-size: 26px;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    color: var(--orange);
+  }
+
+  /* ══════════════════════════════════════════════════
+     SECTION 4 — FOOTER CTA
+  ══════════════════════════════════════════════════ */
+  .footer-cta {
+    background:
+      radial-gradient(ellipse 60% 80% at 50% 100%, rgba(246,148,107,0.18) 0%, transparent 70%),
+      var(--navy);
+    border-top: 1px solid rgba(255,255,255,0.06);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* footer CTA glow comes from background gradient only — no pseudo-element to avoid hard-line artifacts */
+
+  .footer-cta-inner {
+    position: relative;
+    z-index: 2;
+    padding: 120px 64px;
+    max-width: 700px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .footer-cta-inner .section-title {
+    font-size: clamp(36px, 5vw, 62px);
+    margin-bottom: 20px;
+  }
+
+  .footer-cta-inner .section-subtitle {
+    font-style: italic;
+    max-width: 420px;
+    margin: 0 auto 48px;
+    text-align: center;
+  }
+
+  /* ── SITE FOOTER ─────────────────────────────────── */
+  .site-footer {
+    background: var(--navy-dark);
+    border-top: 1px solid rgba(255,255,255,0.06);
+    padding: 32px 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  .site-footer a { color: var(--text-muted); text-decoration: none; }
+  .site-footer a:hover { color: var(--white); }
+
+  .footer-links { display: flex; gap: 28px; }
+
+  /* ══════════════════════════════════════════════════
+     ANIMATIONS
+  ══════════════════════════════════════════════════ */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* scroll-triggered fade-up for content sections */
+  .reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.65s ease, transform 0.65s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── IMAGE LOADER ────────────────────────────────────
+     Bypasses Chrome's file:// local image restriction.
+     Fades out after all 4 photos are loaded.
+  ─────────────────────────────────────────────────── */
+  .img-loader {
+    position: fixed;
+    bottom: 20px; left: 50%; transform: translateX(-50%);
+    z-index: 200;
+    background: rgba(39,45,62,0.97);
+    border: 1px solid rgba(255,255,255,0.14);
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    color: rgba(255,255,255,0.65);
+    transition: opacity 0.5s, transform 0.5s;
+    white-space: nowrap;
+  }
+  .img-loader.done {
+    opacity: 0;
+    transform: translateX(-50%) translateY(12px);
+    pointer-events: none;
+  }
+  .load-btn {
+    background: var(--orange);
+    color: #111;
+    border: none;
+    padding: 8px 18px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.2s;
+  }
+  .load-btn:hover { background: var(--orange-light); }
+
+  /* ══════════════════════════════════════════════════
+     MOBILE — ≤ 768px
+     Strategy:
+     - Hero: portrait becomes full-bleed bg, text stacks
+       over it with stronger vignette; Featured Maker
+       moves below headline area
+     - Nav: collapses to hamburger menu
+     - All grids: single column
+     - Calculator: stacks vertically
+     - Padding: 24px gutters throughout
+     - CTA button: full width on small screens
+  ══════════════════════════════════════════════════ */
+
+  /* ── HAMBURGER BUTTON ────────────────────────────── */
+  .nav-hamburger {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 36px; height: 36px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    margin-left: auto;
+    flex-shrink: 0;
+  }
+  .nav-hamburger span {
+    display: block;
+    height: 2px;
+    background: var(--white);
+    border-radius: 2px;
+    transition: transform 0.3s, opacity 0.3s;
+  }
+  .nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+  .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  /* ── MOBILE NAV DRAWER ───────────────────────────── */
+  .nav-drawer {
+    display: none;
+    position: fixed;
+    top: 56px; left: 0; right: 0;
+    background: #272d3e;
+    z-index: 99;
+    flex-direction: column;
+    padding: 24px 28px;
+    gap: 0;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.4);
+  }
+  .nav-drawer.open { display: flex; }
+  .nav-drawer a, .nav-drawer .nav-already {
+    display: block;
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--white);
+    text-decoration: none;
+    opacity: 0.85;
+  }
+  .nav-drawer .nav-already {
+    font-size: 12px;
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0;
+    opacity: 0.5;
+    padding-top: 20px;
+    border-bottom: none;
+  }
+  .nav-drawer .nav-signin {
+    color: var(--yellow) !important;
+    opacity: 1 !important;
+    border-bottom: none;
+    padding-top: 4px;
+  }
+
+  @media (max-width: 768px) {
+
+    /* ── NAV ───────────────────────────────────────── */
+    nav {
+      padding: 0 20px;
+      justify-content: space-between;
+    }
+    nav > a, nav > span { display: none; }
+    .nav-hamburger { display: flex; }
+
+    /* ── HERO ──────────────────────────────────────── */
+    .hero {
+      height: auto;
+      min-height: unset;
+    }
+
+    /* ── PORTRAIT ROW — dedicated image block ───────── */
+    /* Switches from layout-transparent to a real contained row */
+    .portrait-row {
+      display: block !important;
+      position: relative !important;
+      width: 100%;
+      height: 360px; /* portrait strip height — adjust to taste */
+      flex-shrink: 0;
+      order: 3; /* after hero-content (1) and CTA (2) */
+      overflow: hidden;
+    }
+
+    /* portrait slides fill the row */
+    .portrait-zone {
+      position: absolute !important;
+      inset: 0;
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+    /* vignette scoped to row */
+    .portrait-vignette {
+      position: absolute !important;
+      inset: 0;
+      width: 100% !important;
+      height: 100% !important;
+      background:
+        linear-gradient(to bottom, var(--navy) 0%, transparent 25%, transparent 75%, var(--navy) 100%),
+        linear-gradient(to right,  var(--navy) 0%, transparent 30%);
+    }
+
+    /* glow in portrait row — blooms up from bottom of strip */
+    .portrait-glow {
+      position: absolute !important;
+      inset: 0;
+      height: 100% !important;
+      background: radial-gradient(
+        ellipse 80% 60% at 50% 110%,
+        var(--orange) 0%,
+        rgba(246,148,107,0.4) 30%,
+        transparent 70%
+      );
+      opacity: 0.35;
+    }
+
+    /* texture inside portrait row visible on mobile */
+    .texture-portrait { display: block !important; }
+
+    /* hero-level texture stays but scoped to non-portrait areas */
+    .hero > .texture-overlay {
+      z-index: 4;
+      pointer-events: none;
+    }
+
+    /* ── FEATURED MAKER — bottom-right of portrait row ── */
+    .featured-maker {
+      position: absolute !important;
+      right: 16px !important;
+      bottom: 12px !important;
+      left: auto !important;
+      width: auto !important;
+      max-width: 220px !important;
+      padding: 10px 12px !important;
+      background: rgba(39,45,62,0.72);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.1);
+      animation: fadeUp 0.6s 0.36s ease both;
+      order: unset !important;
+      z-index: 8;
+    }
+
+    .featured-maker .featured-bar { display: block; width: 28px; height: 3px; margin-bottom: 6px; }
+    .featured-maker .featured-desc { display: none; } /* still hidden — keeps it tight */
+    .featured-maker .featured-label { font-size: 9px; margin-bottom: 3px; }
+    .hire-link { font-size: 9px; margin-top: 4px; margin-bottom: 6px; }
+
+    /* carousel controls: single tight row */
+    .carousel-controls {
+      display: flex !important;
+      flex-direction: row !important;
+      flex-wrap: nowrap !important;
+      align-items: center !important;
+      gap: 6px !important;
+      margin-top: 0 !important;
+    }
+
+    /* shrink control buttons on mobile */
+    .ctrl-btn, .ctrl-pause {
+      width: 22px !important;
+      height: 22px !important;
+    }
+
+    /* ── HERO CONTENT ───────────────────────────────── */
+    .hero-content {
+      padding: 28px 24px 20px;
+      max-width: 100%;
+      justify-content: flex-start;
+      flex: 0 0 auto;
+      order: 1;
+    }
+
+    /* ── CTA — below hero text, above portrait row ─────── */
+    .cta-zone {
+      position: static;
+      padding: 20px 24px 0;
+      order: 2;
+      animation: fadeUp 0.6s 0.28s ease both;
+    }
+    .cta-btn {
+      width: 100%;
+      justify-content: center;
+      padding: 18px 24px;
+    }
+
+    /* logo smaller, no negative offset */
+    .logo { margin-left: 0; margin-bottom: 20px; }
+    .logo svg { width: 190px !important; }
+
+    .headline { font-size: clamp(36px, 10.5vw, 54px); margin-bottom: 16px; }
+    .subhead  { font-size: 12px; margin-bottom: 0; }
+
+    /* ── SECTION PADDING ────────────────────────────── */
+    .broken-inner,
+    .how-inner,
+    .footer-cta-inner {
+      padding: 64px 24px;
+    }
+
+    .calc-inner {
+      padding: 64px 24px;
+      grid-template-columns: 1fr;
+      gap: 48px;
+    }
+
+    /* ── GRIDS → SINGLE COLUMN ──────────────────────── */
+    .features-grid,
+    .steps-grid {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    .steps-grid .step-card::after { display: none; }
+
+    /* ── SECTION TITLES ─────────────────────────────── */
+    .section-title { font-size: clamp(28px, 8vw, 40px); }
+    .footer-cta-inner .section-title { font-size: clamp(28px, 9vw, 44px); }
+    .section-subtitle { font-size: 15px; }
+
+    /* ── CALCULATOR ─────────────────────────────────── */
+    .calc-widget { padding: 24px 20px; }
+    .calc-input  { font-size: 22px; }
+    .calc-summary { grid-template-columns: 1fr; gap: 12px; }
+    .result-value { width: 80px; font-size: 11px; }
+    .result-label { width: 72px; font-size: 11px; }
+
+    /* ── FOOTER ─────────────────────────────────────── */
+    .site-footer {
+      flex-direction: column;
+      gap: 16px;
+      text-align: center;
+      padding: 28px 24px;
+    }
+
+    /* ── IMAGE LOADER ───────────────────────────────── */
+    .img-loader {
+      flex-direction: column;
+      gap: 10px;
+      text-align: center;
+      white-space: normal;
+      width: calc(100% - 32px);
+      left: 16px;
+      transform: none;
+      bottom: 16px;
+    }
+    .img-loader.done { transform: translateY(12px); }
+  }
+
+  /* ── DESKTOP RESET — cancel any mobile overrides above 768px ── */
+  @media (min-width: 769px) {
+    /* portrait-row transparent — all children absolutely positioned in hero */
+    .portrait-row { display: contents; position: unset; height: unset; order: unset; }
+
+    /* restore featured maker to desktop absolute position */
+    .featured-maker {
+      position: absolute !important;
+      right: 52px !important;
+      bottom: 130px !important;
+      left: auto !important;
+      width: 260px !important;
+      max-width: 260px !important;
+      padding: 0 !important;
+      background: transparent !important;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+      border: none !important;
+      order: unset !important;
+    }
+    .featured-maker .featured-bar { display: block; width: 44px; height: 4px; margin-bottom: 10px; }
+    .featured-maker .featured-desc { display: block; }
+    .featured-maker .featured-label { font-size: 11px; margin-bottom: 5px; }
+    .hire-link { font-size: 11px; margin-top: 12px; margin-bottom: 0; }
+
+    /* restore controls to proper row */
+    .carousel-controls {
+      display: flex !important;
+      flex-direction: row !important;
+      align-items: center !important;
+      gap: 10px !important;
+      margin-top: 14px !important;
+    }
+    .ctrl-btn, .ctrl-pause { width: 26px !important; height: 26px !important; }
+
+    /* restore hero sizing */
+    .hero { height: 100vh; min-height: unset; }
+    .hero-content { order: unset; padding: 48px 64px 140px; max-width: 780px; }
+    .cta-zone { position: absolute; bottom: 52px; left: 0; right: 0; padding: 0; order: unset; }
+    .cta-btn { width: auto; padding: 20px 72px; }
+
+    /* restore texture */
+    .texture-portrait { display: none !important; }
+  }
+
+  /* ── TABLET — 769px–1024px ───────────────────────── */
+  @media (min-width: 769px) and (max-width: 1024px) {
+    nav { padding: 0 32px; gap: 20px; font-size: 11px; }
+    .nav-already { display: none; }
+
+    .hero-content { padding: 48px 48px 140px; max-width: 560px; }
+    .logo svg { width: 260px !important; }
+    .logo { margin-left: -28px; }
+
+    .broken-inner,
+    .how-inner { padding: 80px 48px; }
+
+    .calc-inner {
+      padding: 80px 48px;
+      gap: 48px;
+    }
+
+    .footer-cta-inner { padding: 80px 48px; }
+    .site-footer { padding: 28px 48px; }
+
+    /* 2-col features on tablet, 3-col steps still works */
+    .features-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  /* ── SMALL MOBILE — ≤ 390px ──────────────────────── */
+  @media (max-width: 390px) {
+    .headline { font-size: 34px; }
+    .logo svg { width: 170px !important; }
+    .platform-chip { font-size: 11px; padding: 5px 10px; }
+  }
+
+  /* nav-logo-mobile hidden on desktop */
+  .nav-logo-mobile { display: none; }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════
+     NAV (fixed)
+══════════════════════════════════════════════════ -->
+<nav>
+  <!-- Small logo mark visible only on mobile -->
+  <svg class="nav-logo-mobile" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 120">
+    <polygon points="30,4 52,32 8,32" fill="#d4e022"/>
+    <polygon points="30,116 52,88 8,88" fill="#f6946b"/>
+  </svg>
+  <a href="#">Home</a>
+  <a href="#how">About</a>
+  <a href="#how">How Lyriem Works</a>
+  <a href="#join">Signup</a>
+  <span class="nav-already">Already have an account?</span>
+  <a href="#" class="nav-signin">Sign In</a>
+  <!-- Hamburger — mobile only -->
+  <button class="nav-hamburger" id="navHamburger" aria-label="Open menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- Mobile nav drawer -->
+<div class="nav-drawer" id="navDrawer">
+  <a href="#" onclick="closeNav()">Home</a>
+  <a href="#how" onclick="closeNav()">About</a>
+  <a href="#how" onclick="closeNav()">How Lyriem Works</a>
+  <a href="#join" onclick="closeNav()">Signup</a>
+  <span class="nav-already">Already have an account?</span>
+  <a href="#" class="nav-signin" onclick="closeNav()">Sign In</a>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     HERO
+══════════════════════════════════════════════════ -->
+<section class="hero">
+
+  <!-- Texture overlay covers full hero — separate from portrait-row -->
+  <div class="texture-overlay"></div>
+
+  <!-- Portrait row — on desktop these are absolute; on mobile becomes a contained block -->
+  <div class="portrait-row">
+    <div class="portrait-zone" id="portraitZone"></div>
+    <div class="portrait-vignette"></div>
+    <div class="portrait-glow"></div>
+    <!-- texture inside portrait-row so it overlays the photos too -->
+    <div class="texture-overlay texture-portrait"></div>
+
+    <!-- Featured Maker — desktop: absolute bottom-right of hero; mobile: bottom-right of portrait-row -->
+    <div class="featured-maker" id="featuredMaker">
+      <div class="featured-bar"></div>
+      <p class="featured-label">Featured Maker: <span id="makerName"></span></p>
+      <p class="featured-desc" id="makerDesc"></p>
+      <a href="#" class="hire-link" id="hireLink">
+        Hire this Maker
+        <svg width="12" height="10" viewBox="0 0 12 10" fill="none">
+          <path d="M1 5h10M7 1l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      <div class="carousel-controls">
+        <button class="ctrl-btn" id="btnPrev" aria-label="Previous maker">
+          <svg width="9" height="11" viewBox="0 0 9 11" fill="none">
+            <path d="M7 1L2 5.5L7 10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <div class="carousel-dots" id="carouselDots"></div>
+        <button class="ctrl-btn" id="btnNext" aria-label="Next maker">
+          <svg width="9" height="11" viewBox="0 0 9 11" fill="none">
+            <path d="M2 1L7 5.5L2 10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <button class="ctrl-pause" id="btnPause" aria-label="Pause">
+          <svg id="iconPause" width="10" height="11" viewBox="0 0 10 11" fill="currentColor">
+            <rect x="1" y="1" width="3" height="9" rx="0.5"/>
+            <rect x="6" y="1" width="3" height="9" rx="0.5"/>
+          </svg>
+          <svg id="iconPlay" width="10" height="11" viewBox="0 0 10 11" fill="currentColor" style="display:none">
+            <path d="M1 1L9 5.5L1 10V1Z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-content">
+    <div class="logo">
+      <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 513.96 256">
+        <defs>
+          <style>
+            .cls-1 { fill: #f7976b; }
+            .cls-2 { fill: #ffffff; }
+            .cls-3 { fill: #ebea66; }
+          </style>
+        </defs>
+        <g>
+          <path class="cls-2" d="M74.37,205.88v-75.43h-13.51v79.18c0,5.39,4.37,9.76,9.76,9.76h49.36v-13.51h-45.61Z"/>
+          <path class="cls-2" d="M309.25,116.42h3.75c5.38,0,9.76,4.37,9.76,9.76v31.82h-13.51v-41.58h0Z" transform="translate(178.8 453.21) rotate(-90)"/>
+          <rect class="cls-2" x="309.25" y="152.88" width="13.51" height="41.58" transform="translate(142.33 489.67) rotate(-90)"/>
+          <path class="cls-2" d="M149.38,150.7h-.2s-6-20.25-29-20.25v12.54c17.87,0,21.83,23.87,22.44,28.62v47.78h13.51v-49.13c1.08-6.81,5.7-27.27,22.24-27.27v-12.54c-23,0-29,20.25-29,20.25Z"/>
+          <path class="cls-2" d="M259.44,131.4v74.73c0,.94-.76,1.7-1.7,1.7h-18.49c-.4,0-.78-.17-1.05-.47l-22.08-25.98s-.39-.85.41-.85h4.81c9.63,0,17.44-7.81,17.44-17.44v-13.02c0-9.63-7.81-17.44-17.44-17.44h-20.11v11.01h17.26c5.2,0,9.42,4.22,9.42,9.42v7.03c0,5.2-4.22,9.42-9.42,9.42h-10.77c-8.47,0-9.75,9.46-2.82,16.39,2.4,2.4,23.61,25.81,29.13,32.03.83.94,2.01,1.45,3.27,1.45h25.9c5.39,0,9.76-4.37,9.76-9.76v-78.23h-13.51Z"/>
+          <path class="cls-2" d="M432.02,131.27c-20.39.42-21.07,18.34-21.07,18.34h0v12.46s1.01,6.49-5.38,6.49c-.08,0-.13-.03-.2-.03-.08,0-.13.03-.2.03-6.39,0-5.38-6.49-5.38-6.49v-12.46h0s-.68-17.92-21.07-18.34c-20.39.42-21.07,16.39-21.07,18.34v54.01c0,1.24-1.01,2.25-2.25,2.25h-60.19v3.75c0,5.39,4.37,9.76,9.76,9.76h52.25c6.93,0,12.54-5.62,12.54-12.54v-.97l.05-56.26c0-4.3,3.64-7.45,8.91-7.45s8.91,3.18,8.91,7.45c0,0,.05,12.2.05,16.09,0,4.31,2.17,14.49,17.69,14.49s17.69-10.18,17.69-14.49c0-3.89.05-16.09.05-16.09,0-4.26,3.64-7.45,8.91-7.45s8.91,3.14,8.91,7.45l.05,69.77h12.11v-69.77c0-1.95-.68-17.92-21.07-18.34Z"/>
+        </g>
+        <g>
+          <path class="cls-3" d="M277.88,84.84l10.17,7.02s-16.51-45.79-18.83-51.35c-1.94-4.66-7.35-5.48-10.77-.57-.69.99-15.46,21.25-15.46,21.25l9.11,6.2,9.85-13.81,15.94,31.27Z"/>
+          <path class="cls-1" d="M250.57,72.5l-9.67-6.54s17.18,46.1,19.5,51.66c1.94,4.66,7.35,5.48,10.77.57.69-.99,14.7-21.75,14.7-21.75l-9.44-6.16-10.12,12.54-15.74-30.33Z"/>
+        </g>
+      </svg>
+    </div>
+    <h1 class="headline">The "No<br>Platform Fee"<br>Freelance<br>Market Place</h1>
+    <p class="subhead">Free Freelancers. Empower Businesses.<br>Reshape the Future of Work.</p>
+  </div>
+
+  <div class="cta-zone">
+    <a href="#join" class="cta-btn">Sign Up</a>
+  </div>
+
+</section>
+
+<!-- Photo loader — bypasses Chrome's file:// restriction.
+     Select all 4 portraits at once in order: Darius, Chrissy, Priya, Marco.
+     Bar fades out automatically once all photos are loaded. -->
+<div class="img-loader" id="imgLoader">
+  <span class="load-status">Load portraits: <span id="loadCount">0</span> / 4</span>
+  <button class="load-btn" id="loadBtn">Choose Photos</button>
+  <input type="file" id="fileInput" accept="image/*" multiple style="display:none">
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     SECTION 1 — THE MARKETPLACE IS BROKEN
+══════════════════════════════════════════════════ -->
+<section class="broken-section">
+  <div class="broken-inner">
+    <h2 class="section-title reveal">The Marketplace is Broken.</h2>
+    <p class="section-subtitle reveal">We're rebuilding it on a foundation of transparency, zero extractive fees, and undeniable trust.</p>
+
+    <div class="features-grid">
+
+      <div class="feature-card reveal">
+        <svg class="feature-icon" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.8">
+          <circle cx="20" cy="20" r="16"/>
+          <path d="M14 20h12M20 14v12" stroke-linecap="round"/>
+          <path d="M16 16l8 8M24 16l-8 8" stroke-linecap="round" opacity="0.4"/>
+        </svg>
+        <h3>0% Platform Fees</h3>
+        <p>Makers keep exactly what they earn. No hidden cuts, no tiered subscriptions. Just pure value exchange.</p>
+      </div>
+
+      <div class="feature-card reveal">
+        <svg class="feature-icon" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M20 6l12 6v10c0 6-5 11-12 14C13 33 8 28 8 22V12l12-6z" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M15 20l3.5 3.5L25 17" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <h3>Smart-Contract Escrow</h3>
+        <p>Funds are locked securely before work begins and released automatically upon milestone approval.</p>
+      </div>
+
+      <div class="feature-card reveal">
+        <svg class="feature-icon" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M8 20c0-1.5 1-3 3-3h4a3 3 0 010 6h-4c-2 0-3-1.5-3-3z" stroke-linecap="round"/>
+          <path d="M25 20c0-1.5 1-3 3-3h1a3 3 0 010 6h-1c-2 0-3-1.5-3-3z" stroke-linecap="round"/>
+          <path d="M15 20h10" stroke-linecap="round"/>
+        </svg>
+        <h3>Portable Reputation</h3>
+        <p>Your reviews and job history live on-chain. You own your professional identity, not the platform.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     SECTION 2 — HOW IT WORKS
+══════════════════════════════════════════════════ -->
+<section class="how-section" id="how">
+  <div class="how-inner">
+    <p class="section-eyebrow reveal">How it works</p>
+    <h2 class="section-title reveal">A streamlined workflow<br>designed for absolute clarity.</h2>
+
+    <div class="steps-grid">
+
+      <div class="step-card reveal">
+        <div class="step-number">1</div>
+        <h3>Agree &amp; Lock</h3>
+        <p>Initiator and Maker agree on terms. Funds are securely locked in a transparent escrow contract.</p>
+      </div>
+
+      <div class="step-card reveal">
+        <div class="step-number">2</div>
+        <h3>Create &amp; Deliver</h3>
+        <p>Maker executes the project. All communication is encrypted and milestone-tracked.</p>
+      </div>
+
+      <div class="step-card reveal">
+        <div class="step-number">3</div>
+        <h3>Approve &amp; Release</h3>
+        <p>Initiator approves the work. Funds are instantly released to the Maker. Zero deductions.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     SECTION 3 — EARNINGS CALCULATOR
+══════════════════════════════════════════════════ -->
+<section class="calc-section">
+  <div class="calc-inner">
+
+    <!-- Left copy -->
+    <div class="calc-left">
+      <p class="section-eyebrow reveal">True Earnings Calculator</p>
+      <h2 class="section-title reveal">See what you've <em>actually</em> been earning</h2>
+      <p class="section-subtitle reveal" style="margin-top:16px">Every major freelance platform takes a cut of your work. Enter what you earn and see exactly how much you've been handing over — then see what you'd keep on Lyriem.</p>
+
+      <ul class="bullet-list reveal">
+        <li class="bullet-item">
+          <span class="bullet-dot fiverr"></span>
+          <span><strong>Fiverr</strong> takes a flat 20% on every order. Every single one.</span>
+        </li>
+        <li class="bullet-item">
+          <span class="bullet-dot upwork"></span>
+          <span><strong>Upwork</strong> starts at 20% and averages ~12% when you factor in their tiered structure.</span>
+        </li>
+        <li class="bullet-item">
+          <span class="bullet-dot freelancer"></span>
+          <span><strong>Freelancer.com</strong> takes 10% on top of additional bid and milestone fees.</span>
+        </li>
+        <li class="bullet-item">
+          <span class="bullet-dot lyriem"></span>
+          <span><strong>Lyriem</strong> takes nothing. Zero. Your rate is your rate.</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Right calculator widget -->
+    <div class="calc-right reveal">
+      <div class="calc-widget">
+        <p class="calc-widget-label">Calculate your earnings</p>
+
+        <div class="calc-tabs">
+          <button class="calc-tab active" data-mode="annual">Annual earnings</button>
+          <button class="calc-tab" data-mode="project">Per project</button>
+        </div>
+
+        <div class="calc-input-wrap">
+          <span class="calc-dollar">$</span>
+          <input class="calc-input" id="earningsInput" type="number" value="60000" min="0" max="10000000">
+        </div>
+
+        <p class="calc-platform-label">Platforms you currently use</p>
+        <div class="platform-chips">
+          <button class="platform-chip active" data-fee="0.12">Upwork ~12% avg</button>
+          <button class="platform-chip" data-fee="0.20">Fiverr 20% flat</button>
+          <button class="platform-chip" data-fee="0.10">Freelancer.com 10%</button>
+          <button class="platform-chip" data-fee="0.06">Toptal 6% freelancer</button>
+        </div>
+
+        <div class="calc-results">
+          <div class="result-row">
+            <span class="result-label" id="platformLabel">Upwork</span>
+            <div class="result-bar-wrap">
+              <div class="result-bar platform-bar" id="platformBar" style="width:100%"></div>
+            </div>
+            <span class="result-value negative" id="platformLoss">–$7,200</span>
+          </div>
+          <div class="result-row">
+            <span class="result-label">Lyriem</span>
+            <div class="result-bar-wrap">
+              <div class="result-bar lyriem-bar" id="lyriemBar" style="width:100%"></div>
+            </div>
+            <span class="result-value positive" id="lyriemKept">$60,000 kept</span>
+          </div>
+        </div>
+
+        <div class="calc-summary">
+          <div class="summary-card">
+            <p class="summary-label" id="lossLabel">Fees lost this year</p>
+            <p class="summary-value" id="lossValue">$7,200</p>
+          </div>
+          <div class="summary-card">
+            <p class="summary-label" id="loss3Label">Over 3 years, you lose</p>
+            <p class="summary-value" id="loss3Value">$21,600</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     SECTION 4 — FOOTER CTA
+══════════════════════════════════════════════════ -->
+<section class="footer-cta" id="join">
+  <div class="texture-overlay"></div>
+  <div class="footer-cta-inner">
+    <h2 class="section-title reveal">Ready to join the movement?</h2>
+    <p class="section-subtitle reveal">Stop paying for the privilege of working. Start building your portable reputation today.</p>
+    <a href="#" class="cta-btn reveal">Join Lyriem Today</a>
+  </div>
+</section>
+
+<!-- ── SITE FOOTER ────────────────────────────────── -->
+<footer class="site-footer">
+  <span>© 2026 Lyriem. All rights reserved.</span>
+  <div class="footer-links">
+    <a href="#">Privacy</a>
+    <a href="#">Terms</a>
+    <a href="#">Contact</a>
+  </div>
+</footer>
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  TIMING SETTINGS
+// ═══════════════════════════════════════════════════════
+const AUTO_INTERVAL_MS = 5000;
+const SLIDE_FADE_MS    = 1400;
+const TEXT_FADE_MS     = 450;
+
+// ═══════════════════════════════════════════════════════
+//  MAKER DATA — replace img: null with real photo paths
+// ═══════════════════════════════════════════════════════
+const makers = [
+  { name: "Meet Darius",  desc: "Brand identity and motion graphics, working remotely from Chicago, IL", img: "maker1.png", color: "#2a3545" },
+  { name: "Meet Chrissy", desc: "Experiential design and 3D visualization based out of Atlanta, GA",    img: "maker2.png", color: "#1e3030" },
+  { name: "Meet Priya",   desc: "UX research and service design, based in Austin, TX",                  img: "maker3.png", color: "#301e30" },
+  { name: "Meet Marco",   desc: "Photography and creative direction, shooting from Miami, FL",           img: "maker4.png", color: "#20203a" }
+];
+
+// Sync progress bar CSS
+(function() {
+  for (const sheet of document.styleSheets) {
+    try {
+      for (const rule of sheet.cssRules) {
+        if (rule.selectorText === '.dot-progress.running::after') {
+          rule.style.transition = `width ${AUTO_INTERVAL_MS / 1000}s linear`;
+        }
+      }
+    } catch(e) {}
+  }
+})();
+
+// Build slides
+const zone = document.getElementById('portraitZone');
+const slides = [];
+
+function hexAdd(hex, amt) {
+  const n = parseInt(hex.slice(1), 16);
+  return `rgb(${Math.min(255,((n>>16)&0xff)+amt)},${Math.min(255,((n>>8)&0xff)+amt)},${Math.min(255,(n&0xff)+amt)})`;
+}
+
+makers.forEach((maker, i) => {
+  const slide = document.createElement('div');
+  slide.className = 'portrait-slide' + (i === 0 ? ' active' : '');
+  slide.style.transition = `opacity ${SLIDE_FADE_MS}ms cubic-bezier(0.4,0,0.2,1)`;
+  if (maker.img) {
+    slide.innerHTML = `<img src="${maker.img}" alt="${maker.name}">`;
+  } else {
+    slide.style.cssText += `background:radial-gradient(ellipse 52% 68% at 58% 34%,${hexAdd(maker.color,40)} 0%,${maker.color} 42%,#0d1018 100%);width:100%;height:100%;position:absolute;inset:0;`;
+    slide.innerHTML = `<svg style="position:absolute;top:12%;left:50%;transform:translateX(-42%);opacity:0.12;width:230px;height:330px" viewBox="0 0 220 320" fill="none"><ellipse cx="110" cy="108" rx="66" ry="80" fill="white"/><path d="M8 320 C8 228 212 228 212 320" fill="white"/></svg>`;
+  }
+  zone.appendChild(slide);
+  slides.push(slide);
+});
+
+// Build dots
+const dotsEl = document.getElementById('carouselDots');
+makers.forEach((_, i) => {
+  const dot = document.createElement('button');
+  dot.className = 'dot' + (i === 0 ? ' active dot-progress' : '');
+  dot.setAttribute('aria-label', `Maker ${i+1}`);
+  dot.addEventListener('click', () => { goTo(i); resetAutoTimer(); });
+  dotsEl.appendChild(dot);
+});
+const dots = Array.from(dotsEl.querySelectorAll('.dot'));
+
+const makerName    = document.getElementById('makerName');
+const makerDesc    = document.getElementById('makerDesc');
+const featuredCard = document.getElementById('featuredMaker');
+const btnPrev      = document.getElementById('btnPrev');
+const btnNext      = document.getElementById('btnNext');
+const btnPause     = document.getElementById('btnPause');
+const iconPause    = document.getElementById('iconPause');
+const iconPlay     = document.getElementById('iconPlay');
+
+featuredCard.querySelectorAll('.featured-label,.featured-desc,.hire-link').forEach(el => {
+  el.style.transition = `opacity ${TEXT_FADE_MS}ms ease`;
+});
+
+function setMakerText(i) {
+  makerName.textContent = makers[i].name;
+  makerDesc.textContent = makers[i].desc;
+}
+setMakerText(0);
+
+let current = 0, animating = false, paused = false, autoTimer = null;
+
+function goTo(next) {
+  if (animating || next === current) return;
+  animating = true;
+  featuredCard.classList.add('fading');
+  slides[current].classList.remove('active');
+  slides[next].classList.add('active');
+  dots[current].classList.remove('active','dot-progress','running');
+  dots[next].classList.add('active','dot-progress');
+  if (!paused) requestAnimationFrame(() => requestAnimationFrame(() => dots[next].classList.add('running')));
+  current = next;
+  setTimeout(() => { setMakerText(current); featuredCard.classList.remove('fading'); }, TEXT_FADE_MS);
+  setTimeout(() => { animating = false; }, SLIDE_FADE_MS);
+}
+
+function startAutoTimer() {
+  clearInterval(autoTimer);
+  autoTimer = setInterval(() => goTo((current + 1) % makers.length), AUTO_INTERVAL_MS);
+}
+
+function resetAutoTimer() {
+  if (!paused) {
+    startAutoTimer();
+    const d = dots[current];
+    d.classList.remove('running');
+    requestAnimationFrame(() => requestAnimationFrame(() => d.classList.add('running')));
+  }
+}
+
+startAutoTimer();
+requestAnimationFrame(() => requestAnimationFrame(() => dots[0].classList.add('running')));
+
+btnPrev.addEventListener('click', () => { goTo((current-1+makers.length)%makers.length); resetAutoTimer(); });
+btnNext.addEventListener('click', () => { goTo((current+1)%makers.length); resetAutoTimer(); });
+btnPause.addEventListener('click', () => {
+  paused = !paused;
+  if (paused) {
+    clearInterval(autoTimer);
+    btnPause.classList.add('paused');
+    iconPause.style.display = 'none';
+    iconPlay.style.display = 'block';
+    dots[current].classList.remove('running');
+  } else {
+    btnPause.classList.remove('paused');
+    iconPause.style.display = 'block';
+    iconPlay.style.display = 'none';
+    startAutoTimer();
+    dots[current].classList.remove('running');
+    requestAnimationFrame(() => requestAnimationFrame(() => dots[current].classList.add('running')));
+  }
+});
+
+// ═══════════════════════════════════════════════════════
+//  EARNINGS CALCULATOR
+// ═══════════════════════════════════════════════════════
+const platforms = {
+  'Upwork ~12% avg':    { fee: 0.12, name: 'Upwork'        },
+  'Fiverr 20% flat':    { fee: 0.20, name: 'Fiverr'        },
+  'Freelancer.com 10%': { fee: 0.10, name: 'Freelancer.com'},
+  'Toptal 6% freelancer':{ fee: 0.06, name: 'Toptal'       }
+};
+
+let activePlatform = 'Upwork ~12% avg';
+let calcMode = 'annual';
+
+const earningsInput = document.getElementById('earningsInput');
+const platformLabel = document.getElementById('platformLabel');
+const platformBar   = document.getElementById('platformBar');
+const lyriemBar     = document.getElementById('lyriemBar');
+const platformLoss  = document.getElementById('platformLoss');
+const lyriemKept    = document.getElementById('lyriemKept');
+const lossValue     = document.getElementById('lossValue');
+const loss3Value    = document.getElementById('loss3Value');
+const lossLabel     = document.getElementById('lossLabel');
+const loss3Label    = document.getElementById('loss3Label');
+
+function fmt(n) {
+  return '$' + Math.round(n).toLocaleString();
+}
+
+function updateCalc() {
+  const raw     = parseFloat(earningsInput.value) || 0;
+  const p       = platforms[activePlatform];
+  const fee     = raw * p.fee;
+  const kept    = raw;
+  const pct     = p.fee; // platform bar as % of total
+
+  platformLabel.textContent = p.name;
+  platformBar.style.width   = (pct * 100) + '%';
+  lyriemBar.style.width     = '100%';
+  platformLoss.textContent  = '–' + fmt(fee);
+  lyriemKept.textContent    = fmt(kept) + ' kept';
+  lossValue.textContent     = fmt(fee);
+  loss3Value.textContent    = fmt(fee * 3);
+
+  const period = calcMode === 'annual' ? 'this year' : 'this project';
+  lossLabel.textContent  = `Fees lost ${period}`;
+  loss3Label.textContent = calcMode === 'annual' ? 'Over 3 years, you lose' : 'Over 10 projects, you lose';
+  loss3Value.textContent = calcMode === 'annual' ? fmt(fee * 3) : fmt(fee * 10);
+}
+
+// Platform chip clicks
+document.querySelectorAll('.platform-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    document.querySelectorAll('.platform-chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    activePlatform = chip.textContent.trim();
+    updateCalc();
+  });
+});
+
+// Tab clicks
+document.querySelectorAll('.calc-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.calc-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    calcMode = tab.dataset.mode;
+    updateCalc();
+  });
+});
+
+earningsInput.addEventListener('input', updateCalc);
+updateCalc();
+
+// ═══════════════════════════════════════════════════════
+//  SCROLL REVEAL
+// ═══════════════════════════════════════════════════════
+const revealEls = document.querySelectorAll('.reveal');
+const observer  = new IntersectionObserver((entries) => {
+  entries.forEach((entry, i) => {
+    if (entry.isIntersecting) {
+      // stagger siblings slightly
+      const siblings = Array.from(entry.target.parentElement.querySelectorAll('.reveal'));
+      const idx = siblings.indexOf(entry.target);
+      setTimeout(() => entry.target.classList.add('visible'), idx * 80);
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.15 });
+
+revealEls.forEach(el => observer.observe(el));
+
+// ═══════════════════════════════════════════════════════
+//  MOBILE NAV HAMBURGER
+// ═══════════════════════════════════════════════════════
+const hamburger = document.getElementById('navHamburger');
+const navDrawer = document.getElementById('navDrawer');
+
+function closeNav() {
+  hamburger.classList.remove('open');
+  navDrawer.classList.remove('open');
+}
+
+hamburger.addEventListener('click', () => {
+  hamburger.classList.toggle('open');
+  navDrawer.classList.toggle('open');
+});
+
+// close drawer on scroll
+window.addEventListener('scroll', closeNav, { passive: true });
+
+//  Reads local files via FileReader — bypasses Chrome's
+//  file:// security block. Select photos in carousel order.
+// ═══════════════════════════════════════════════════════
+const imgLoader = document.getElementById('imgLoader');
+const loadBtn   = document.getElementById('loadBtn');
+const fileInput = document.getElementById('fileInput');
+const loadCount = document.getElementById('loadCount');
+const imgEls    = []; // populated alongside slides above
+let   loaded    = 0;
+
+// Grab the img element from each slide (built in carousel loop above)
+// We re-query here since slides are built dynamically
+zone.querySelectorAll('img').forEach(img => imgEls.push(img));
+
+loadBtn.addEventListener('click', () => fileInput.click());
+
+fileInput.addEventListener('change', (e) => {
+  Array.from(e.target.files).forEach((file, fi) => {
+    if (fi >= makers.length) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      // If slide has a real <img> already, update it
+      // Otherwise create one and hide the placeholder SVG
+      const slide = slides[fi];
+      let img = slide.querySelector('img');
+      if (!img) {
+        img = document.createElement('img');
+        img.style.cssText = `
+          position:absolute; inset:0;
+          width:100%; height:100%;
+          object-fit:cover; object-position:center 20%;
+          filter:grayscale(1) brightness(0.62) contrast(1.1);
+          display:block;
+        `;
+        slide.prepend(img);
+      }
+      img.src = ev.target.result;
+      img.style.display = 'block';
+      const svg = slide.querySelector('svg');
+      if (svg) svg.style.display = 'none';
+      loaded++;
+      loadCount.textContent = loaded;
+      if (loaded >= makers.length) {
+        setTimeout(() => imgLoader.classList.add('done'), 800);
+      }
+    };
+    reader.readAsDataURL(file);
+  });
+});
+</script>
+
+</body>
+</html>
