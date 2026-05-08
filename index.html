@@ -766,47 +766,6 @@
     transform: translateY(0);
   }
 
-  /* ── IMAGE LOADER ────────────────────────────────────
-     Bypasses Chrome's file:// local image restriction.
-     Fades out after all 4 photos are loaded.
-  ─────────────────────────────────────────────────── */
-  .img-loader {
-    position: fixed;
-    bottom: 20px; left: 50%; transform: translateX(-50%);
-    z-index: 200;
-    background: rgba(39,45,62,0.97);
-    border: 1px solid rgba(255,255,255,0.14);
-    padding: 14px 20px;
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    font-size: 12px;
-    letter-spacing: 0.05em;
-    color: rgba(255,255,255,0.65);
-    transition: opacity 0.5s, transform 0.5s;
-    white-space: nowrap;
-  }
-  .img-loader.done {
-    opacity: 0;
-    transform: translateX(-50%) translateY(12px);
-    pointer-events: none;
-  }
-  .load-btn {
-    background: var(--orange);
-    color: #111;
-    border: none;
-    padding: 8px 18px;
-    font-family: 'DM Sans', sans-serif;
-    font-weight: 700;
-    font-size: 11px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    cursor: pointer;
-    white-space: nowrap;
-    transition: background 0.2s;
-  }
-  .load-btn:hover { background: var(--orange-light); }
-
   /* ══════════════════════════════════════════════════
      MOBILE — ≤ 768px
      Strategy:
@@ -1066,19 +1025,6 @@
       text-align: center;
       padding: 28px 24px;
     }
-
-    /* ── IMAGE LOADER ───────────────────────────────── */
-    .img-loader {
-      flex-direction: column;
-      gap: 10px;
-      text-align: center;
-      white-space: normal;
-      width: calc(100% - 32px);
-      left: 16px;
-      transform: none;
-      bottom: 16px;
-    }
-    .img-loader.done { transform: translateY(12px); }
   }
 
   /* ── DESKTOP RESET — cancel any mobile overrides above 768px ── */
@@ -1280,14 +1226,7 @@
 
 </section>
 
-<!-- Photo loader — bypasses Chrome's file:// restriction.
-     Select all 4 portraits at once in order: Darius, Chrissy, Priya, Marco.
-     Bar fades out automatically once all photos are loaded. -->
-<div class="img-loader" id="imgLoader">
-  <span class="load-status">Load portraits: <span id="loadCount">0</span> / 4</span>
-  <button class="load-btn" id="loadBtn">Choose Photos</button>
-  <input type="file" id="fileInput" accept="image/*" multiple style="display:none">
-</div>
+
 
 <!-- ══════════════════════════════════════════════════
      SECTION 1 — THE MARKETPLACE IS BROKEN
@@ -1719,56 +1658,6 @@ hamburger.addEventListener('click', () => {
 
 // close drawer on scroll
 window.addEventListener('scroll', closeNav, { passive: true });
-
-//  Reads local files via FileReader — bypasses Chrome's
-//  file:// security block. Select photos in carousel order.
-// ═══════════════════════════════════════════════════════
-const imgLoader = document.getElementById('imgLoader');
-const loadBtn   = document.getElementById('loadBtn');
-const fileInput = document.getElementById('fileInput');
-const loadCount = document.getElementById('loadCount');
-const imgEls    = []; // populated alongside slides above
-let   loaded    = 0;
-
-// Grab the img element from each slide (built in carousel loop above)
-// We re-query here since slides are built dynamically
-zone.querySelectorAll('img').forEach(img => imgEls.push(img));
-
-loadBtn.addEventListener('click', () => fileInput.click());
-
-fileInput.addEventListener('change', (e) => {
-  Array.from(e.target.files).forEach((file, fi) => {
-    if (fi >= makers.length) return;
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-      // If slide has a real <img> already, update it
-      // Otherwise create one and hide the placeholder SVG
-      const slide = slides[fi];
-      let img = slide.querySelector('img');
-      if (!img) {
-        img = document.createElement('img');
-        img.style.cssText = `
-          position:absolute; inset:0;
-          width:100%; height:100%;
-          object-fit:cover; object-position:center 20%;
-          filter:grayscale(1) brightness(0.62) contrast(1.1);
-          display:block;
-        `;
-        slide.prepend(img);
-      }
-      img.src = ev.target.result;
-      img.style.display = 'block';
-      const svg = slide.querySelector('svg');
-      if (svg) svg.style.display = 'none';
-      loaded++;
-      loadCount.textContent = loaded;
-      if (loaded >= makers.length) {
-        setTimeout(() => imgLoader.classList.add('done'), 800);
-      }
-    };
-    reader.readAsDataURL(file);
-  });
-});
 </script>
 
 </body>
