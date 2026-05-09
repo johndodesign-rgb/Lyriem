@@ -804,39 +804,40 @@
     <div class="portrait-vignette"></div>
     <div class="portrait-glow"></div>
     <div class="texture-overlay texture-portrait"></div>
+  </div>
 
-    <div class="featured-maker" id="featuredMaker">
-      <div class="featured-rule"></div>
-      <div class="featured-maker-text">
-        <p class="featured-label">Featured Maker: <span id="makerName"></span></p>
-        <p class="maker-name" id="makerFullName"></p>
-        <p class="maker-role" id="makerRole"></p>
-        <p class="maker-location">
-          <svg width="10" height="12" viewBox="0 0 10 12" fill="none">
-            <path d="M5 0C2.79 0 1 1.79 1 4c0 3 4 8 4 8s4-5 4-8c0-2.21-1.79-4-4-4zm0 5.5C4.17 5.5 3.5 4.83 3.5 4S4.17 2.5 5 2.5 6.5 3.17 6.5 4 5.83 5.5 5 5.5z" fill="currentColor"/>
-          </svg>
-          <span id="makerLocation"></span>
-        </p>
-        <a href="#" class="view-link" id="viewLink">
-          View Profile
-          <svg width="12" height="10" viewBox="0 0 12 10" fill="none">
-            <path d="M1 5h10M7 1l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </a>
-      </div>
-      <div class="carousel-controls">
-        <button class="ctrl-btn" id="btnPrev" aria-label="Previous maker">
-          <svg width="9" height="11" viewBox="0 0 9 11" fill="none"><path d="M7 1L2 5.5L7 10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
-        <div class="carousel-dots" id="carouselDots"></div>
-        <button class="ctrl-btn" id="btnNext" aria-label="Next maker">
-          <svg width="9" height="11" viewBox="0 0 9 11" fill="none"><path d="M2 1L7 5.5L2 10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
-        <button class="ctrl-pause" id="btnPause" aria-label="Pause">
-          <svg id="iconPause" width="10" height="11" viewBox="0 0 10 11" fill="currentColor"><rect x="1" y="1" width="3" height="9" rx="0.5"/><rect x="6" y="1" width="3" height="9" rx="0.5"/></svg>
-          <svg id="iconPlay" width="10" height="11" viewBox="0 0 10 11" fill="currentColor" style="display:none"><path d="M1 1L9 5.5L1 10V1Z"/></svg>
-        </button>
-      </div>
+  <!-- Featured maker — outside portrait-row so it renders below the photo on mobile (order:4) -->
+  <div class="featured-maker" id="featuredMaker">
+    <div class="featured-rule"></div>
+    <div class="featured-maker-text">
+      <p class="featured-label">Featured Maker: <span id="makerName"></span></p>
+      <p class="maker-name" id="makerFullName"></p>
+      <p class="maker-role" id="makerRole"></p>
+      <p class="maker-location">
+        <svg width="10" height="12" viewBox="0 0 10 12" fill="none">
+          <path d="M5 0C2.79 0 1 1.79 1 4c0 3 4 8 4 8s4-5 4-8c0-2.21-1.79-4-4-4zm0 5.5C4.17 5.5 3.5 4.83 3.5 4S4.17 2.5 5 2.5 6.5 3.17 6.5 4 5.83 5.5 5 5.5z" fill="currentColor"/>
+        </svg>
+        <span id="makerLocation"></span>
+      </p>
+      <a href="#" class="view-link" id="viewLink">
+        View Profile
+        <svg width="12" height="10" viewBox="0 0 12 10" fill="none">
+          <path d="M1 5h10M7 1l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+    </div>
+    <div class="carousel-controls">
+      <button class="ctrl-btn" id="btnPrev" aria-label="Previous maker">
+        <svg width="9" height="11" viewBox="0 0 9 11" fill="none"><path d="M7 1L2 5.5L7 10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="carousel-dots" id="carouselDots"></div>
+      <button class="ctrl-btn" id="btnNext" aria-label="Next maker">
+        <svg width="9" height="11" viewBox="0 0 9 11" fill="none"><path d="M2 1L7 5.5L2 10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <button class="ctrl-pause" id="btnPause" aria-label="Pause">
+        <svg id="iconPause" width="10" height="11" viewBox="0 0 10 11" fill="currentColor"><rect x="1" y="1" width="3" height="9" rx="0.5"/><rect x="6" y="1" width="3" height="9" rx="0.5"/></svg>
+        <svg id="iconPlay" width="10" height="11" viewBox="0 0 10 11" fill="currentColor" style="display:none"><path d="M1 1L9 5.5L1 10V1Z"/></svg>
+      </button>
     </div>
   </div>
 
