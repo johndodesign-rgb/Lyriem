@@ -253,6 +253,7 @@
   .featured-maker.fading .maker-name,
   .featured-maker.fading .maker-role,
   .featured-maker.fading .maker-location,
+  .featured-maker.fading .featured-maker-text,
   .featured-maker.fading .view-link { opacity: 0 !important; }
 
   /* CTA link — "View Profile" */
@@ -640,47 +641,58 @@
     .texture-portrait { display: block !important; }
     .hero > .texture-overlay { z-index: 4; pointer-events: none; }
 
-    /* orange rule separator between text and portrait strip */
+    /* orange rule + drop shadow — delineates hero text from portrait strip */
     .portrait-row::before {
       content: '';
       position: absolute;
       top: 0; left: 0; right: 0;
-      height: 2px;
+      height: 3px;
       background: var(--orange);
-      opacity: 0.5;
+      opacity: 0.7;
       z-index: 10;
+      box-shadow: 0 4px 20px 2px rgba(246,148,107,0.45), 0 2px 8px rgba(0,0,0,0.4);
     }
 
-    /* Featured maker — bottom-right of portrait strip */
+
+    /* ── FEATURED MAKER — full-width horizontal bar below portrait strip ── */
     .featured-maker {
-      position: absolute !important;
-      right: 14px !important; bottom: 14px !important;
-      left: auto !important; width: auto !important; max-width: 230px !important;
-      padding: 12px 14px !important;
-      background: rgba(30,36,52,0.88);
-      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-      border: 1px solid rgba(255,255,255,0.12) !important;
-      order: unset !important; z-index: 8;
+      position: static !important;
+      right: auto !important; bottom: auto !important; left: auto !important;
+      width: 100% !important; max-width: 100% !important;
+      padding: 14px 20px !important;
+      background: var(--navy-dark) !important;
+      backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
+      border: none !important;
+      border-top: 2px solid rgba(246,148,107,0.5) !important;
+      box-shadow: 0 -4px 20px rgba(246,148,107,0.15) !important;
+      order: 4 !important;
+      z-index: 8;
+      display: flex !important;
+      flex-direction: row !important;
+      align-items: center !important;
+      gap: 12px !important;
     }
-    /* hide rule on mobile — border replaces it */
     .featured-maker .featured-rule { display: none; }
-    .featured-maker .featured-label { font-size: 9px; margin-bottom: 5px; }
-    .maker-name     { font-size: 13px; margin-bottom: 3px; }
-    .maker-role     { font-size: 10px; margin-bottom: 3px; }
-    .maker-location { font-size: 10px; margin-bottom: 10px; }
-    .view-link      { font-size: 9px; }
+    .featured-maker .featured-label { font-size: 9px; margin-bottom: 2px; }
+    .maker-name     { font-size: 13px; font-weight: 800; margin-bottom: 1px; }
+    .maker-role     { font-size: 10px; margin-bottom: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .maker-location { font-size: 10px; margin-bottom: 0; }
+    .view-link      { display: none; } /* hidden — too tight in the bar */
 
-    /* carousel controls: tight single row */
+    /* right side: controls only, no top margin */
     .carousel-controls {
       display: flex !important; flex-direction: row !important;
       flex-wrap: nowrap !important; align-items: center !important;
-      gap: 6px !important; margin-top: 8px !important;
+      gap: 6px !important; margin-top: 0 !important; flex-shrink: 0 !important;
     }
-    .ctrl-btn, .ctrl-pause { width: 22px !important; height: 22px !important; }
+    .ctrl-btn, .ctrl-pause { width: 26px !important; height: 26px !important; }
+
+    /* wrap label+name+role+location in a flex column that takes remaining space */
+    .featured-maker-text { flex: 1; min-width: 0; }
 
     /* hero content */
     .hero-content { padding: 28px 24px 20px; max-width: 100%; justify-content: flex-start; flex: 0 0 auto; order: 1; }
-    .logo { margin-left: 0; margin-bottom: 20px; }
+    .logo { margin-left: -18px; margin-bottom: 20px; }
     .logo svg { width: 190px !important; }
     .headline { font-size: clamp(36px, 10.5vw, 54px); margin-bottom: 16px; }
     .subhead  { font-size: 12px; margin-bottom: 0; }
@@ -795,21 +807,23 @@
 
     <div class="featured-maker" id="featuredMaker">
       <div class="featured-rule"></div>
-      <p class="featured-label">Featured Maker: <span id="makerName"></span></p>
-      <p class="maker-name" id="makerFullName"></p>
-      <p class="maker-role" id="makerRole"></p>
-      <p class="maker-location">
-        <svg width="10" height="12" viewBox="0 0 10 12" fill="none">
-          <path d="M5 0C2.79 0 1 1.79 1 4c0 3 4 8 4 8s4-5 4-8c0-2.21-1.79-4-4-4zm0 5.5C4.17 5.5 3.5 4.83 3.5 4S4.17 2.5 5 2.5 6.5 3.17 6.5 4 5.83 5.5 5 5.5z" fill="currentColor"/>
-        </svg>
-        <span id="makerLocation"></span>
-      </p>
-      <a href="#" class="view-link" id="viewLink">
-        View Profile
-        <svg width="12" height="10" viewBox="0 0 12 10" fill="none">
-          <path d="M1 5h10M7 1l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </a>
+      <div class="featured-maker-text">
+        <p class="featured-label">Featured Maker: <span id="makerName"></span></p>
+        <p class="maker-name" id="makerFullName"></p>
+        <p class="maker-role" id="makerRole"></p>
+        <p class="maker-location">
+          <svg width="10" height="12" viewBox="0 0 10 12" fill="none">
+            <path d="M5 0C2.79 0 1 1.79 1 4c0 3 4 8 4 8s4-5 4-8c0-2.21-1.79-4-4-4zm0 5.5C4.17 5.5 3.5 4.83 3.5 4S4.17 2.5 5 2.5 6.5 3.17 6.5 4 5.83 5.5 5 5.5z" fill="currentColor"/>
+          </svg>
+          <span id="makerLocation"></span>
+        </p>
+        <a href="#" class="view-link" id="viewLink">
+          View Profile
+          <svg width="12" height="10" viewBox="0 0 12 10" fill="none">
+            <path d="M1 5h10M7 1l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+      </div>
       <div class="carousel-controls">
         <button class="ctrl-btn" id="btnPrev" aria-label="Previous maker">
           <svg width="9" height="11" viewBox="0 0 9 11" fill="none"><path d="M7 1L2 5.5L7 10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -1210,7 +1224,7 @@ const btnPause       = document.getElementById('btnPause');
 const iconPause      = document.getElementById('iconPause');
 const iconPlay       = document.getElementById('iconPlay');
 
-featuredCard.querySelectorAll('.featured-label,.maker-name,.maker-role,.maker-location,.view-link').forEach(el => {
+featuredCard.querySelectorAll('.featured-label,.maker-name,.maker-role,.maker-location,.view-link,.featured-maker-text').forEach(el => {
   el.style.transition = `opacity ${TEXT_FADE_MS}ms ease`;
 });
 
