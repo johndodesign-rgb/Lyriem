@@ -10,6 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;0,9..40,900;1,9..40,400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="lyriem-shared.css">
 <style>
+  /* ── MANTRA ───────────────────────────────────────── */
   .mantra-section {
     background: var(--navy);
     border-top: 1px solid rgba(255,255,255,0.06);
@@ -31,15 +32,26 @@
   .mantra-lines { display: flex; flex-direction: column; gap: 14px; margin-bottom: 48px; }
   .mantra-line { font-size: clamp(15px, 1.8vw, 19px); font-weight: 500; color: rgba(255,255,255,0.8); line-height: 1.5; }
   .mantra-line strong { color: var(--orange); font-weight: 800; }
-  .mantra-highlight { font-size: clamp(17px, 2vw, 22px); font-weight: 700; color: var(--yellow); }
+  .mantra-highlight { font-size: clamp(17px, 2vw, 22px); font-weight: 700; color: var(--yellow); margin-top: 8px; }
 
-  .commitment-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-top: 56px; }
-  .commitment-item { background: var(--card-bg); border: 1px solid var(--card-border); padding: 32px; display: flex; gap: 20px; align-items: flex-start; }
-  .commitment-number { font-size: 13px; font-weight: 900; letter-spacing: 0.1em; color: var(--orange); flex-shrink: 0; margin-top: 3px; }
+  /* ── COMMITMENT GRID ──────────────────────────────── */
+  .commitment-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr);
+    gap: 24px; margin-top: 56px;
+  }
+  .commitment-item {
+    background: var(--card-bg); border: 1px solid var(--card-border);
+    padding: 32px; display: flex; gap: 20px; align-items: flex-start;
+  }
+  .commitment-number {
+    font-size: 13px; font-weight: 900; letter-spacing: 0.1em;
+    color: var(--orange); flex-shrink: 0; margin-top: 3px;
+  }
   .commitment-item h3 { font-size: 17px; font-weight: 700; margin-bottom: 8px; color: var(--white); }
   .commitment-item p  { font-size: 14px; color: var(--text-muted); line-height: 1.7; }
 
-  .email-form { display: flex; gap: 0; max-width: 480px; margin: 0 auto; }
+  /* ── EMAIL FORM ───────────────────────────────────── */
+  .email-form { display: flex; max-width: 480px; margin: 0 auto; }
   .email-input {
     flex: 1; background: rgba(255,255,255,0.07);
     border: 1px solid rgba(255,255,255,0.2); border-right: none;
@@ -71,7 +83,9 @@
 </style>
 </head>
 <body>
+
 <a href="#main" class="skip-link">Skip to main content</a>
+
 <nav class="site-nav" aria-label="Main navigation">
   <a href="index.html">Home</a>
   <a href="about.html" aria-current="page">About</a>
@@ -80,7 +94,9 @@
   <a href="how-it-works.html">How It Works</a>
   <span class="nav-muted">Already have an account?</span>
   <a href="https://www.lyriem.com/signin" class="nav-signin">Sign In</a>
-  <button class="nav-hamburger" id="navBurger" aria-label="Open navigation menu" aria-expanded="false" aria-controls="navDrawer"><span></span><span></span><span></span></button>
+  <button class="nav-hamburger" id="navBurger" aria-label="Open navigation menu" aria-expanded="false" aria-controls="navDrawer">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
 <div class="nav-drawer" id="navDrawer" role="dialog" aria-label="Navigation menu">
   <a href="index.html">Home</a>
@@ -94,125 +110,145 @@
 
 <main id="main">
 
-<section class="page-hero">
-  <img src="#" alt="The Lyriem team" class="page-hero-img">
-  <div class="page-hero-vignette" aria-hidden="true"></div>
-  <div class="page-hero-glow" aria-hidden="true"></div>
-  <div class="page-hero-texture" aria-hidden="true"></div>
-  <div class="page-hero-content">
-    <p class="page-hero-eyebrow">About Lyriem</p>
-    <h1 class="page-hero-title">The Freelance Platform<br>Built by Freelancers</h1>
-    <p class="page-hero-subtitle">A different kind of freelance platform.</p>
-    <p class="page-hero-body">We've lived the broken system. The endless fees, lost ownership, and slow bureaucratic work. That's why we're building something better. At the heart of Lyriem is a simple belief: work should give more than it takes.</p>
-    <a href="https://www.lyriem.com/register" class="btn-primary">Join Lyriem Free</a>
-  </div>
-</section>
-
-<!-- MANTRA — navy with texture -->
-<section class="mantra-section" aria-labelledby="mantra-title">
-  <div class="mantra-inner">
-    <p class="section-eyebrow reveal" style="margin-bottom:24px">The Lyriem Mantra</p>
-    <h2 class="mantra-title reveal" id="mantra-title">It's time for a platform<br>that gives more than it takes.</h2>
-    <div class="mantra-lines">
-      <p class="mantra-line reveal">Where <strong>Makers</strong> keep what they earn.</p>
-      <p class="mantra-line reveal">Where <strong>Initiators</strong> find talent they can trust.</p>
-      <p class="mantra-line reveal">Where platform fees and middlemen are a thing of the past.</p>
-      <p class="mantra-highlight reveal" style="margin-top:8px">The work is yours. The proof is yours. The future is yours.</p>
+  <!-- HERO -->
+  <section class="page-hero">
+    <img src="#" alt="The Lyriem team" class="page-hero-img">
+    <div class="page-hero-vignette" aria-hidden="true"></div>
+    <div class="page-hero-glow" aria-hidden="true"></div>
+    <div class="page-hero-texture" aria-hidden="true"></div>
+    <div class="page-hero-content">
+      <p class="page-hero-eyebrow">About Lyriem</p>
+      <h1 class="page-hero-title">The Freelance Platform<br>Built by Freelancers</h1>
+      <p class="page-hero-subtitle">A different kind of freelance platform.</p>
+      <p class="page-hero-body">We've lived the broken system. The endless fees, lost ownership, and slow bureaucratic work. That's why we're building something better. At the heart of Lyriem is a simple belief: work should give more than it takes.</p>
+      <a href="https://www.lyriem.com/register" class="btn-primary">Join Lyriem Free</a>
     </div>
-    <a href="https://www.lyriem.com/register" class="btn-primary reveal">Join Lyriem Free</a>
-  </div>
-</section>
+  </section>
 
-<!-- WHERE LYRIEM BEGAN — dark -->
-<section class="section-dark section-pad" aria-labelledby="began-title">
-  <div class="section-inner">
-    <div class="two-col">
-      <div class="two-col-text">
-        <p class="section-eyebrow reveal">Where Lyriem Began</p>
-        <h2 class="reveal" id="began-title" style="font-weight:900;font-size:clamp(26px,3vw,40px);line-height:1.1;letter-spacing:-0.02em;margin-bottom:20px;color:var(--white)">We built what we wish had existed all along.</h2>
-        <p class="reveal" style="font-size:16px;color:var(--text-muted);line-height:1.7;margin-bottom:16px">Lyriem started with a group of freelancers and founders who'd all lived the same frustrations. Businesses focused on stretching their budgets. Freelancers working harder for less. And traditional freelance platforms taking a cut from both sides to pad their bottom line.</p>
-        <p class="reveal" style="font-size:16px;color:var(--text-muted);line-height:1.7">So we built a platform that succeeds when its users do — not one that skims from their success.</p>
+  <!-- MANTRA — navy + texture -->
+  <section class="mantra-section" aria-labelledby="mantra-title">
+    <div class="mantra-inner">
+      <p class="section-eyebrow reveal" style="margin-bottom:24px">The Lyriem Mantra</p>
+      <h2 class="mantra-title reveal" id="mantra-title">It's time for a platform<br>that gives more than it takes.</h2>
+      <div class="mantra-lines">
+        <p class="mantra-line reveal">Where <strong>Makers</strong> keep what they earn.</p>
+        <p class="mantra-line reveal">Where <strong>Initiators</strong> find talent they can trust.</p>
+        <p class="mantra-line reveal">Where platform fees and middlemen are a thing of the past.</p>
+        <p class="mantra-highlight reveal">The work is yours. The proof is yours. The future is yours.</p>
       </div>
-      <div class="two-col-img reveal"><img src="#" alt="Freelancers who built Lyriem"></div>
+      <a href="https://www.lyriem.com/register" class="btn-primary reveal">Join Lyriem Free</a>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- OUR COMMITMENT — navy -->
-<section class="section-navy section-pad" aria-labelledby="commitment-title">
-  <div class="section-inner">
-    <p class="section-eyebrow reveal" style="text-align:center">Our Commitment</p>
-    <h2 class="section-title reveal" id="commitment-title" style="text-align:center;margin-bottom:16px">These aren't features.<br>They're principles.</h2>
-    <p class="section-subtitle reveal" style="text-align:center;max-width:520px;margin:0 auto">We're dedicated to creating an environment where everyone can win.</p>
-    <div class="commitment-grid">
-      <div class="commitment-item reveal">
-        <span class="commitment-number" aria-hidden="true">01</span>
-        <div><h3>Fairness</h3><p>Freelancers keep 100% of what they earn. Every dollar you spend goes to the work, not the platform.</p></div>
-      </div>
-      <div class="commitment-item reveal">
-        <span class="commitment-number" aria-hidden="true">02</span>
-        <div><h3>Trust</h3><p>Escrow protection and verified on-chain reputation remove the guesswork from every project.</p></div>
-      </div>
-      <div class="commitment-item reveal">
-        <span class="commitment-number" aria-hidden="true">03</span>
-        <div><h3>Freedom</h3><p>No walled gardens. Your relationships are yours. Work how, where, and when you want.</p></div>
-      </div>
-      <div class="commitment-item reveal">
-        <span class="commitment-number" aria-hidden="true">04</span>
-        <div><h3>Velocity</h3><p>Start projects this week, not next quarter. Onboard fast, collaborate freely, get paid instantly.</p></div>
+  <!-- WHERE LYRIEM BEGAN — navy (different from mantra) -->
+  <section class="section-navy section-pad" aria-labelledby="began-title">
+    <div class="section-inner">
+      <div class="two-col">
+        <div class="two-col-text">
+          <p class="section-eyebrow reveal">Where Lyriem Began</p>
+          <h2 class="reveal" id="began-title" style="font-weight:900;font-size:clamp(26px,3vw,40px);line-height:1.1;letter-spacing:-0.02em;margin-bottom:20px;color:var(--white)">We built what we wish had existed all along.</h2>
+          <p class="reveal" style="font-size:16px;color:var(--text-muted);line-height:1.7;margin-bottom:16px">Lyriem started with a group of freelancers and founders who'd all lived the same frustrations. Businesses focused on stretching their budgets. Freelancers working harder for less. And traditional freelance platforms taking a cut from both sides to pad their bottom line.</p>
+          <p class="reveal" style="font-size:16px;color:var(--text-muted);line-height:1.7">So we built a platform that succeeds when its users do — not one that skims from their success.</p>
+        </div>
+        <div class="two-col-img reveal">
+          <img src="#" alt="Freelancers who built Lyriem">
+        </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- THE FUTURE — dark -->
-<section class="section-dark section-pad" aria-labelledby="future-title">
-  <div class="section-inner">
-    <div class="two-col">
-      <div class="two-col-img reveal"><img src="#" alt="The future of freelance work"></div>
-      <div class="two-col-text">
-        <p class="section-eyebrow reveal">The Future We're Building</p>
-        <h2 class="reveal" id="future-title" style="font-weight:900;font-size:clamp(26px,3vw,40px);line-height:1.1;letter-spacing:-0.02em;margin-bottom:20px;color:var(--white)">Loyalty earned through freedom.</h2>
-        <p class="reveal" style="font-size:16px;color:var(--text-muted);line-height:1.7;margin-bottom:16px">Our competitors believe control keeps their users loyal. Locked-down systems. Threats of bans. We believe loyalty is earned through freedom.</p>
-        <p class="reveal" style="font-size:16px;color:var(--text-muted);line-height:1.7;margin-bottom:16px">So we created an open platform people join because it benefits them — not because they're trapped. We're building a future where Makers and Initiators connect directly, own their outcomes, and work without hidden costs or rules that slow them down.</p>
-        <p class="reveal" style="font-size:16px;color:var(--text-muted);line-height:1.7">No platform fees. No middlemen. Just trust, ownership, and opportunity.</p>
+  <!-- OUR COMMITMENT — dark -->
+  <section class="section-dark section-pad" aria-labelledby="commitment-title">
+    <div class="section-inner">
+      <p class="section-eyebrow reveal" style="text-align:center">Our Commitment</p>
+      <h2 class="section-title reveal" id="commitment-title" style="text-align:center;margin-bottom:16px">These aren't features.<br>They're principles.</h2>
+      <p class="section-subtitle reveal" style="text-align:center;max-width:520px;margin:0 auto">We're dedicated to creating an environment where everyone can win.</p>
+      <div class="commitment-grid">
+        <div class="commitment-item reveal">
+          <span class="commitment-number" aria-hidden="true">01</span>
+          <div>
+            <h3>Fairness</h3>
+            <p>Freelancers keep 100% of what they earn. Every dollar you spend goes to the work, not the platform.</p>
+          </div>
+        </div>
+        <div class="commitment-item reveal">
+          <span class="commitment-number" aria-hidden="true">02</span>
+          <div>
+            <h3>Trust</h3>
+            <p>Escrow protection and verified on-chain reputation remove the guesswork from every project.</p>
+          </div>
+        </div>
+        <div class="commitment-item reveal">
+          <span class="commitment-number" aria-hidden="true">03</span>
+          <div>
+            <h3>Freedom</h3>
+            <p>No walled gardens. Your relationships are yours. Work how, where, and when you want.</p>
+          </div>
+        </div>
+        <div class="commitment-item reveal">
+          <span class="commitment-number" aria-hidden="true">04</span>
+          <div>
+            <h3>Velocity</h3>
+            <p>Start projects this week, not next quarter. Onboard fast, collaborate freely, get paid instantly.</p>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- JOIN US — dark -->
-<section class="section-dark section-pad" style="border-top:1px solid rgba(255,255,255,0.06)" aria-labelledby="join-title">
-  <div class="section-inner" style="max-width:700px;margin:0 auto;text-align:center">
-    <p class="section-eyebrow reveal">Join Us</p>
-    <h2 class="section-title reveal" id="join-title">Be part of the next evolution<br>of the freelance economy.</h2>
-    <p class="reveal" style="font-size:16px;color:var(--text-muted);line-height:1.7;margin-bottom:48px">No platform fees. No middlemen. Just trust, ownership, and opportunity. Let's rebuild the system together.</p>
-    <form class="email-form reveal" action="mailto:austin.riggs@lyriem.com" method="get" enctype="text/plain" aria-label="Join Lyriem waitlist">
-      <label for="joinEmail" class="skip-link">Email address</label>
-      <input type="email" id="joinEmail" name="email" class="email-input" placeholder="Your email address" required autocomplete="email">
-      <button type="submit" class="email-submit">Join Lyriem Free</button>
-    </form>
-  </div>
-</section>
+  <!-- THE FUTURE — navy -->
+  <section class="section-navy section-pad" aria-labelledby="future-title">
+    <div class="section-inner">
+      <div class="two-col">
+        <div class="two-col-img reveal">
+          <img src="#" alt="The future of freelance work">
+        </div>
+        <div class="two-col-text">
+          <p class="section-eyebrow reveal">The Future We're Building</p>
+          <h2 class="reveal" id="future-title" style="font-weight:900;font-size:clamp(26px,3vw,40px);line-height:1.1;letter-spacing:-0.02em;margin-bottom:20px;color:var(--white)">Loyalty earned through freedom.</h2>
+          <p class="reveal" style="font-size:16px;color:var(--text-muted);line-height:1.7;margin-bottom:16px">Our competitors believe control keeps their users loyal. Locked-down systems. Threats of bans. We believe loyalty is earned through freedom.</p>
+          <p class="reveal" style="font-size:16px;color:var(--text-muted);line-height:1.7;margin-bottom:16px">So we created an open platform people join because it benefits them — not because they're trapped. We're building a future where Makers and Initiators connect directly, own their outcomes, and work without hidden costs or rules that slow them down.</p>
+          <p class="reveal" style="font-size:16px;color:var(--text-muted);line-height:1.7">No platform fees. No middlemen. Just trust, ownership, and opportunity.</p>
+        </div>
+      </div>
+    </div>
+  </section>
 
-<section class="footer-cta" aria-labelledby="fcta-about">
-  <div class="footer-cta-inner">
-    <h2 class="section-title reveal" id="fcta-about">You earned it.<br>You own it.<br>You keep it.</h2>
-    <p class="footer-cta-subtitle reveal">The way work should work — transparent, direct, fair.</p>
-    <p class="footer-cta-tagline reveal">The freelance tax has gone on long enough.</p>
-    <a href="https://www.lyriem.com/register" class="btn-primary reveal">Join Lyriem Free</a>
-  </div>
-</section>
+  <!-- JOIN US — dark -->
+  <section class="section-dark section-pad" aria-labelledby="join-title">
+    <div class="section-inner" style="max-width:700px;margin:0 auto;text-align:center">
+      <p class="section-eyebrow reveal">Join Us</p>
+      <h2 class="section-title reveal" id="join-title">Be part of the next evolution<br>of the freelance economy.</h2>
+      <p class="reveal" style="font-size:16px;color:var(--text-muted);line-height:1.7;margin-bottom:48px">No platform fees. No middlemen. Just trust, ownership, and opportunity. Let's rebuild the system together.</p>
+      <form class="email-form reveal" action="mailto:austin.riggs@lyriem.com" method="get" enctype="text/plain" aria-label="Join Lyriem mailing list">
+        <input type="email" id="joinEmail" name="email" class="email-input" placeholder="Your email address" required autocomplete="email" aria-label="Email address">
+        <button type="submit" class="email-submit">Join Lyriem Free</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- FOOTER CTA -->
+  <section class="footer-cta" aria-labelledby="fcta-about">
+    <div class="footer-cta-inner">
+      <h2 class="section-title reveal" id="fcta-about">You earned it.<br>You own it.<br>You keep it.</h2>
+      <p class="footer-cta-subtitle reveal">The way work should work — transparent, direct, fair.</p>
+      <p class="footer-cta-tagline reveal">The freelance tax has gone on long enough.</p>
+      <a href="https://www.lyriem.com/register" class="btn-primary reveal">Join Lyriem Free</a>
+    </div>
+  </section>
 
 </main>
 
 <footer class="site-footer">
   <span>© 2026 Lyriem. All rights reserved.</span>
   <nav class="footer-links" aria-label="Footer navigation">
-    <a href="#">Privacy</a><a href="#">Terms</a>
-    <a href="mailto:austin.riggs@lyriem.com">Contact</a><a href="#">Lyriem Data</a>
+    <a href="#">Privacy</a>
+    <a href="#">Terms</a>
+    <a href="mailto:austin.riggs@lyriem.com">Contact</a>
+    <a href="#">Lyriem Data</a>
   </nav>
 </footer>
+
 <script src="lyriem-shared.js"></script>
 </body>
 </html>
